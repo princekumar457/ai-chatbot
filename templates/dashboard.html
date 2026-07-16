@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Dashboard</title>
+    <!-- Fonts and Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>Prince AI Chatbot for Student Portal</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <button class="menu-item-btn active" data-tab="home">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard Home</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="menu-item-btn" data-tab="chat">
+                        <i class="fa-solid fa-robot"></i>
+                        <span>AI Chatbot</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="menu-item-btn" data-tab="academics">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>Academics</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="menu-item-btn" data-tab="tasks">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>Task Tracker</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="menu-item-btn" data-tab="accounts">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span>Tuition Accounts</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="menu-item-btn" data-tab="grades">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>Grades & GPA</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="menu-item-btn" data-tab="faq">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>Help & FAQs</span>
+                    </button>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('logout') }}" class="logout-btn" style="text-decoration: none; justify-content: center;">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Log Out</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="header-bar">
+                <div class="header-title" style="display: flex; align-items: center; gap: 15px;">
+                    <button class="mobile-menu-toggle" id="menu-toggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1 id="page-title">Dashboard Home</h1>
+                        <p id="page-subtitle">Welcome back to your academic overview</p>
+                    </div>
+                </div>
+                <div class="user-badge glass-panel">
+                    <div class="avatar" id="user-avatar">S</div>
+                    <span class="username-label" id="user-display-name">Student</span>
+                </div>
+            </header>
+
+            <!-- TAB 1: DASHBOARD HOME -->
+            <section class="tab-panel active" id="tab-home">
+                <div class="overview-grid">
+                    <!-- Circular Attendance Ring -->
+                    <div class="stat-card glass-panel attendance">
+                        <div class="stat-info">
+                            <h3>Class Attendance</h3>
+                            <p id="attendance-stat">--%</p>
+                        </div>
+                        <div class="progress-ring-container">
+                            <svg class="progress-ring" width="80" height="80">
+                                <circle class="progress-ring-track" stroke="rgba(255,255,255,0.05)" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
+                                <circle class="progress-ring-circle" id="attendance-circle" stroke-width="6" stroke-linecap="round" fill="transparent" r="34" cx="40" cy="40" stroke-dasharray="213.62" stroke-dashoffset="213.62"/>
+                            </svg>
+                            <span class="progress-text" id="attendance-percent-text">--%</span>
+                        </div>
+                    </div>
+
+                    <!-- Fee Status Card -->
+                    <div class="stat-card glass-panel fees">
+                        <div class="stat-info">
+                            <h3>Tuition Balance</h3>
+                            <p id="fees-stat">$--</p>
+                        </div>
+                        <div class="stat-icon-wrapper">
+                            <i class="fa-solid fa-circle-dollar-to-slot"></i>
+                        </div>
+                    </div>
+
+                    <!-- Next Exam Card -->
+                    <div class="stat-card glass-panel exams">
+                        <div class="stat-info">
+                            <h3>Next Examination</h3>
+                            <p id="next-exam-stat">No schedule</p>
+                        </div>
+                        <div class="stat-icon-wrapper">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Attendance Analytics Banner -->
+                <div class="attendance-alert-banner glass-panel" id="attendance-alert-box" style="display: none; margin-bottom: 25px; padding: 18px 24px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div id="attendance-alert-icon-wrapper" style="font-size: 1.5rem; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                        <div>
+                            <h4 id="attendance-alert-title" style="font-family: var(--font-display); font-weight: 700; margin-bottom: 4px;">Debar Warning</h4>
+                            <p id="attendance-alert-message" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.4;"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lower Layout Grid -->
+                <div class="home-section-grid">
+                    <!-- Notices Panel -->
+                    <div class="notices-panel glass-panel">
+                        <h2><i class="fa-solid fa-bullhorn" style="color: var(--primary);"></i> College Notifications</h2>
+                        <div class="notice-list" id="notice-list-container">
+                            <!-- JS populated -->
+                            <div class="notice-card" style="text-align: center; color: var(--text-secondary); padding: 30px;">
+                                <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 10px;"></i>
+                                <p>Loading notice board...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Info Summary -->
+                    <div class="info-summary-card glass-panel">
+                        <h2><i class="fa-solid fa-address-card" style="color: var(--secondary);"></i> Academic Profile</h2>
+                        <div class="profile-fields">
+                            <div class="profile-field">
+                                <span class="profile-field-label">Student Name</span>
+                                <span class="profile-field-value" id="profile-name">--</span>
+                            </div>
+                            <div class="profile-field">
+                                <span class="profile-field-label">Roll Number</span>
+                                <span class="profile-field-value" id="profile-roll">--</span>
+                            </div>
+                            <div class="profile-field">
+                                <span class="profile-field-label">Course / Stream</span>
+                                <span class="profile-field-value" id="profile-course">--</span>
+                            </div>
+                            <div class="profile-field">
+                                <span class="profile-field-label">Current Semester</span>
+                                <span class="profile-field-value" id="profile-semester">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: AI CHATBOT -->
+            <section class="tab-panel" id="tab-chat">
+                <div class="chat-wrapper glass-panel">
+                    <!-- Chat Header with Export -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--border-color); background: rgba(15,23,42,0.2);">
+                        <span style="font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; color: var(--text-secondary); display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-robot" style="color: var(--primary);"></i> 
+                            <span>Chat Session</span>
+                            <span class="online-indicator-dot"></span>
+                        </span>
+                        <div style="display: flex; gap: 15px;">
+                            <button class="action-btn" id="export-chat-btn" title="Export Conversation" style="font-size: 0.9rem; color: var(--text-secondary); font-family: var(--font-display); font-weight: 500; display: flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer;">
+                                <i class="fa-solid fa-file-arrow-down" style="color: var(--primary);"></i>
+                                <span>Export</span>
+                            </button>
+                            <button class="action-btn" id="clear-chat-btn" title="Clear Chat History" style="font-size: 0.9rem; color: var(--text-secondary); font-family: var(--font-display); font-weight: 500; display: flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer;">
+                                <i class="fa-solid fa-trash-can" style="color: var(--danger);"></i>
+                                <span>Clear Chat</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Message Area -->
+                    <div class="chat-messages" id="chat-messages-container">
+                        <div class="message-bubble bot">
+                            <p>Hello! I am your <strong>Prince AI Chatbot</strong>.</p>
+                            <p>How can I help you today? You can ask me details about your attendance, fees, exams, syllabus, notices, or general academic topics!</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Chips -->
+                    <div class="quick-chips-wrapper">
+                        <button class="chat-chip" data-query="What is my current attendance?">📊 Attendance Status</button>
+                        <button class="chat-chip" data-query="When is my next exam?">📅 Exam Dates</button>
+                        <button class="chat-chip" data-query="How much fee is pending?">💰 Fee Details</button>
+                        <button class="chat-chip" data-query="What are the recent notices?">📢 Recent Notices</button>
+                        <button class="chat-chip" data-query="Show database syllabus.">📚 Subject Syllabus</button>
+                        <button class="chat-chip" data-query="Explain binary search algorithm.">🤖 General Coding Tutor</button>
+                    </div>
+
+                    <!-- Input Panel -->
+                    <div class="chat-input-bar">
+                        <button class="send-msg-btn" id="chat-mic-btn" style="background: var(--secondary); margin-right: 0;" title="Speak to AI">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                        <input type="text" class="chat-text-input" id="chat-input" placeholder="Type or speak college query (e.g. When is the DBMS exam?)...">
+                        <button class="send-msg-btn" id="chat-send-btn">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: ACADEMICS -->
+            <section class="tab-panel" id="tab-academics">
+                <div class="academics-grid">
+                    <!-- Syllabus -->
+                    <div class="syllabus-container">
+                        <h2 class="academics-title"><i class="fa-solid fa-bookmark" style="color: var(--primary);"></i> Subject Syllabus</h2>
+                        <div id="syllabus-list-container" style="display: flex; flex-direction: column; gap: 15px;">
+                            <!-- JS loaded -->
+                        </div>
+                    </div>
+
+                    <!-- Exams Timeline -->
+                    <div class="exam-container">
+                        <h2 class="academics-title"><i class="fa-solid fa-clock" style="color: var(--secondary);"></i> Examination Schedule</h2>
+                        <div class="glass-panel" style="padding: 24px;">
+                            <div class="timeline" id="exam-timeline-container">
+                                <!-- JS loaded -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: TASKS tracker -->
+            <section class="tab-panel" id="tab-tasks">
+                <div class="tasks-container">
+                    <div class="glass-panel" style="padding: 25px; margin-bottom: 25px;">
+                        <h2 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 20px;">
+                            <i class="fa-solid fa-list-check" style="color: var(--success); margin-right: 8px;"></i> Assignments Checklists
+                        </h2>
+                        <div id="assignment-list-container">
+                            <!-- JS loaded -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: TUITION ACCOUNTS -->
+            <section class="tab-panel" id="tab-accounts">
+                <div class="accounts-container">
+                    <!-- Fee Summary -->
+                    <div class="fee-breakdown-card glass-panel">
+                        <div class="fee-total-row">
+                            <span class="fee-total-label">Pending Balance Dues</span>
+                            <span class="fee-total-value" id="fee-pending-val">$0.00</span>
+                        </div>
+                        <div class="fee-list">
+                            <div class="fee-row">
+                                <span class="fee-label">Total Semester Tuition Fees</span>
+                                <span class="fee-value" id="fee-total-val">$0.00</span>
+                            </div>
+                            <div class="fee-row">
+                                <span class="fee-label">Total Amount Paid</span>
+                                <span class="fee-value" id="fee-paid-val" style="color: var(--success); font-weight: 600;">$0.00</span>
+                            </div>
+                            <div class="fee-row">
+                                <span class="fee-label">Receipt Status</span>
+                                <span class="fee-value" id="fee-status-val">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment History Receipts -->
+                    <h3 class="payment-history-title"><i class="fa-solid fa-receipt" style="color: var(--primary);"></i> Transaction History</h3>
+                    <div id="receipt-list-container">
+                        <!-- JS Loaded / Mock Receipts -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 6: GRADES & GPA -->
+            <section class="tab-panel" id="tab-grades">
+                <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 25px;">
+                    <!-- Grade Card -->
+                    <div class="glass-panel" style="padding: 25px;">
+                        <h2 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+                            <span><i class="fa-solid fa-graduation-cap" style="color: var(--primary); margin-right: 8px;"></i> Semester Grade Report</span>
+                            <span class="action-badge" id="cgpa-badge" style="background: rgba(99,102,241,0.15); color: var(--primary); padding: 6px 12px; border-radius: 20px; font-weight: 700;">SGPA: --</span>
+                        </h2>
+                        
+                        <div class="admin-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Subject Code & Title</th>
+                                        <th style="text-align: center;">Credits</th>
+                                        <th style="text-align: center;">Marks Obtained</th>
+                                        <th style="text-align: center;">Letter Grade</th>
+                                        <th style="text-align: center;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="student-grades-table-body">
+                                    <!-- JS loaded -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- GPA Projection Calculator -->
+                    <div class="glass-panel" style="padding: 25px;">
+                        <h2 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 10px;">
+                            <i class="fa-solid fa-calculator" style="color: var(--secondary); margin-right: 8px;"></i> GPA Projection Calculator
+                        </h2>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.4;">
+                            Simulate and estimate your semester SGPA by entering projected letter grades for your registered subjects.
+                        </p>
+                        
+                        <form id="gpa-calc-form">
+                            <div id="gpa-calc-rows" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+                                <!-- JS loaded rows based on syllabus or manual input -->
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                                <button type="button" class="btn-primary" id="gpa-recalc-btn" style="width: auto; padding: 12px 24px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
+                                    Recalculate Projection
+                                </button>
+                                <div style="text-align: right;">
+                                    <span style="font-size: 0.95rem; color: var(--text-secondary); font-weight: 500;">Projected Semester SGPA</span>
+                                    <h3 id="projected-gpa-val" style="font-family: var(--font-display); font-size: 2rem; color: var(--secondary); font-weight: 800; margin-top: 4px;">0.00</h3>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 7: FAQs -->
+            <section class="tab-panel" id="tab-faq">
+                <div class="faq-container">
+                    <!-- FAQ Search -->
+                    <div class="search-bar-wrapper">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" class="faq-search-input" id="faq-search" placeholder="Search general student FAQs (e.g. attendance, id card)...">
+                    </div>
+
+                    <!-- Accordion list -->
+                    <div class="faq-list-accordion" id="faq-list-container">
+                        <!-- JS loaded -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast popup -->
+    <div class="toast" id="toast-notify">
+        <i class="fa-solid fa-circle-check" id="toast-icon"></i>
+        <span id="toast-msg">Action performed successfully!</span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

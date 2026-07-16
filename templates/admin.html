@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - College Management</title>
+    <!-- Fonts and Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Admin Console</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <button class="menu-item-btn active" data-admin-tab="students">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Student Records</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="menu-item-btn" data-admin-tab="notices">
+                        <i class="fa-solid fa-bullhorn"></i>
+                        <span>Notice Board</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="menu-item-btn" data-admin-tab="exams">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Exam Scheduler</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="menu-item-btn" data-admin-tab="syllabus">
+                        <i class="fa-solid fa-book"></i>
+                        <span>Syllabus Manager</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="menu-item-btn" data-admin-tab="faqs">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>FAQ Settings</span>
+                    </button>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('logout') }}" class="logout-btn" style="text-decoration: none; justify-content: center;">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Log Out</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="header-bar">
+                <div>
+                    <h1 id="admin-page-title">Manage Student Records</h1>
+                    <p id="admin-page-subtitle">Configure database information and edit student parameters</p>
+                </div>
+                <div class="user-badge glass-panel">
+                    <div class="avatar" style="background: linear-gradient(135deg, var(--danger) 0%, var(--warning) 100%);">A</div>
+                    <span class="username-label">Administrator</span>
+                </div>
+            </header>
+
+            <!-- TAB 1: STUDENT RECORDS -->
+            <section class="admin-panel-section active" id="admin-panel-students">
+                <!-- Edit Student Form Box -->
+                <div class="admin-card glass-panel" id="edit-student-box" style="display: none; border-color: rgba(99, 102, 241, 0.4);">
+                    <div class="admin-card-title">
+                        <span><i class="fa-solid fa-user-pen" style="color: var(--primary);"></i> Edit Student Details</span>
+                        <button class="action-btn" onclick="hideEditBox()" style="font-size: 1.2rem;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <form id="edit-student-form">
+                        <input type="hidden" id="edit-stud-id">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" id="edit-stud-name" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Roll Number</label>
+                                <input type="text" id="edit-stud-roll" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Course</label>
+                                <input type="text" id="edit-stud-course" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Semester</label>
+                                <input type="text" id="edit-stud-semester" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Attendance (%)</label>
+                                <input type="number" id="edit-stud-attendance" step="0.1" min="0" max="100" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Fees Paid ($)</label>
+                                <input type="number" id="edit-stud-paid" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Fees Outstanding Balance ($)</label>
+                                <input type="number" id="edit-stud-due" class="form-input" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: auto; padding: 12px 24px;">Save Student Records</button>
+                    </form>
+                </div>
+
+                <!-- Students List Table -->
+                <div class="admin-card glass-panel">
+                    <div class="admin-card-title">Enrolled Students</div>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Roll Number</th>
+                                    <th>Course</th>
+                                    <th>Semester</th>
+                                    <th>Attendance</th>
+                                    <th>Fees Paid</th>
+                                    <th>Fees Due</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-students-table-body">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: NOTICE BOARD -->
+            <section class="admin-panel-section" id="admin-panel-notices">
+                <div class="admin-card glass-panel">
+                    <div class="admin-card-title">Post New Notification</div>
+                    <form id="add-notice-form">
+                        <div class="form-row">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">Notice Title</label>
+                                <input type="text" id="notice-title-in" class="form-input" placeholder="e.g. Schedule for Lab Exams" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Category</label>
+                                <select id="notice-category-in" class="form-input" required>
+                                    <option value="General">General</option>
+                                    <option value="Academic">Academic</option>
+                                    <option value="Exam">Exam</option>
+                                    <option value="Fee">Fee</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Notice Content</label>
+                            <textarea id="notice-content-in" class="form-input" rows="4" placeholder="Type notice description details..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: auto; padding: 12px 24px;">Post Notice</button>
+                    </form>
+                </div>
+
+                <div class="admin-card glass-panel">
+                    <div class="admin-card-title">Active Board Notices</div>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Title</th>
+                                    <th>Content</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-notices-table-body">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: EXAM SCHEDULER -->
+            <section class="admin-panel-section" id="admin-panel-exams">
+                <div class="admin-card glass-panel">
+                    <div class="admin-card-title">Schedule New Examination</div>
+                    <form id="add-exam-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Subject</label>
+                                <input type="text" id="exam-subject-in" class="form-input" placeholder="e.g. Computer Networks" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Exam Date</label>
+                                <input type="date" id="exam-date-in" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Time Slot</label>
+                                <input type="text" id="exam-time-in" class="form-input" placeholder="e.g. 10:00 AM - 01:00 PM" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Room Number / Location</label>
+                                <input type="text" id="exam-room-in" class="form-input" placeholder="e.g. Lab Block Room 204" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: auto; padding: 12px 24px;">Add Exam Schedule</button>
+                    </form>
+                </div>
+
+                <div class="admin-card glass-panel">
+                    <div class="admin-card-title">Exam Timetables</div>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Room</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-exams-table-body">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: SYLLABUS MANAGER -->
+            <section class="admin-panel-section" id="admin-panel-syllabus">
+                <div class="admin-card glass-panel">
+                    <div class="admin-card-title">Add/Update Syllabus Course Detail</div>
+                    <form id="add-syllabus-form">
+                        <input type="hidden" id="syllabus-id-in">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Course Stream</label>
+                                <input type="text" id="syllabus-course-in" class="form-input" placeholder="e.g. Computer Science" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Semester</label>
+                                <input type="text" id="syllabus-semester-in" class="form-input" placeholder="e.g. Semester 5" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Subject Name</label>
+                                <input type="text" id="syllabus-subject-in" class="form-input" placeholder="e.g. Software Engineering" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Syllabus Topics (Plaintext or comma separated)</label>
+                            <textarea id="syllabus-topics-in" class="form-input" rows="4" placeholder="Enter list of topics, chapters, structures..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Suggested Resources / Textbooks</label>
+                            <input type="text" id="syllabus-resources-in" class="form-input" placeholder="e.g. Pressman Textbook, MDN Docs">
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: auto; padding: 12px 24px;">Save Syllabus Entry</button>
+                    </form>
+                </div>
+
+                <div class="admin-card glass-panel">
+                    <div class="admin-card-title">Subject Syllabus Database</div>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Semester</th>
+                                    <th>Subject</th>
+                                    <th>Topics</th>
+                                    <th>Resources</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-syllabus-table-body">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: FAQ SETTINGS -->
+            <section class="admin-panel-section" id="admin-panel-faqs">
+                <div class="admin-card glass-panel">
+                    <div class="admin-card-title">Add/Edit FAQ Info</div>
+                    <form id="add-faq-form">
+                        <input type="hidden" id="faq-id-in">
+                        <div class="form-row">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">Question</label>
+                                <input type="text" id="faq-question-in" class="form-input" placeholder="e.g. How to apply for a library card?" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Category</label>
+                                <select id="faq-category-in" class="form-input" required>
+                                    <option value="General">General</option>
+                                    <option value="Academic">Academic</option>
+                                    <option value="Exam">Exam</option>
+                                    <option value="Fee">Fee</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Answer Details</label>
+                            <textarea id="faq-answer-in" class="form-input" rows="3" placeholder="Type answer details response..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: auto; padding: 12px 24px;">Save FAQ</button>
+                    </form>
+                </div>
+
+                <div class="admin-card glass-panel">
+                    <div class="admin-card-title">Active General FAQs</div>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Question</th>
+                                    <th>Answer</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-faqs-table-body">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast popup -->
+    <div class="toast" id="toast-notify">
+        <i class="fa-solid fa-circle-check" id="toast-icon"></i>
+        <span id="toast-msg">Database updated successfully!</span>
+    </div>
+
+    <!-- Script dependencies -->
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
